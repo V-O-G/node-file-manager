@@ -1,0 +1,20 @@
+{
+  "name": "node-file-manager",
+  "version": "1.0.0",
+  "description": "This repository is the part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V-O-G/node-file-manager.git"
+  },
+  "keywords": [
+    "nodejs",
+    "assignments"
+  ],
+  "author": "V-O-G",
+  "license": "ISC",
+  "homepage": "https://github.com/V-O-G/node-file-manager#readme"
+}
