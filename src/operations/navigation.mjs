@@ -1,8 +1,7 @@
 import { chdir } from 'process';
-import { homedir } from 'os';
 
 import { tryAction } from '../helpers/common.mjs';
 
-export function changeWorkingDirectory(path = homedir()) {
+export function changeWorkingDirectory(path) {
     tryAction(() => chdir(path));
 }

@@ -1,9 +1,10 @@
 import { createInterface } from 'readline';
+import { homedir } from 'os';
+import { chdir } from 'process';
 
 import { userMessage, logOperationMessage, messageEnum } from './helpers/messages.mjs';
 import { commander } from './helpers/commander.mjs';
 import { getCommand } from './helpers/common.mjs';
-import { changeWorkingDirectory } from './operations/navigation.mjs';
 
 let userMessages;
 const readLine = createInterface({
@@ -15,7 +16,7 @@ init();
 
 function init() {
     userMessages = new userMessage(process.argv);
-    changeWorkingDirectory();
+    chdir(homedir());
     userMessages.logOnEvent(messageEnum.enter);
     logOperationMessage(messageEnum.success);
     subscribeToReadLine();
@@ -24,7 +25,6 @@ function init() {
 function subscribeToReadLine() {
     readLine.on('line', (input) => {
         runCommander(getCommand(input));
-        logOperationMessage(messageEnum.success);
     })
     .on("SIGINT", () => {
         exit();
