@@ -5,6 +5,8 @@ import { logOperationMessage, messageEnum } from './messages.mjs';
 export function tryAction (callback) {
     try { callback(); }
     catch(error) {
+        // TODO: delete
+        console.log(error.message);
         logOperationMessage(messageEnum.error);
     } finally {
         logOperationMessage(messageEnum.success);
@@ -14,6 +16,8 @@ export function tryAction (callback) {
 export async function tryAsyncAction (callback) {
     try { await callback(); }
     catch(error) {
+        // TODO: delete
+        console.log(error.message);
         logOperationMessage(messageEnum.error);
     } finally {
         logOperationMessage(messageEnum.success);

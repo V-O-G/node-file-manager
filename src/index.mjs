@@ -16,7 +16,7 @@ init();
 
 function init() {
     userMessages = new userMessage(process.argv);
-    chdir(homedir());
+    // chdir(homedir()); TODO: uncomment
     userMessages.logOnEvent(messageEnum.enter);
     logOperationMessage(messageEnum.success);
     subscribeToReadLine();
@@ -34,6 +34,7 @@ function subscribeToReadLine() {
 function runCommander(command) {
     if (!commander[command.type]) {
         logOperationMessage(messageEnum.invalid);
+        logOperationMessage(messageEnum.success);
     } else {
         commander[command.type](command.parameters);
     }
