@@ -1,4 +1,5 @@
 import { changeWorkingDirectory } from '../operations/navigation.mjs';
+import { list } from '../operations/list.mjs';
 
 export const commander = {
     up () {
@@ -6,5 +7,8 @@ export const commander = {
     },
     cd ([path]) {
         changeWorkingDirectory(path);
+    },
+    ls () {
+        (async function() { await list() })();
     },
 };
