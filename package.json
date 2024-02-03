@@ -6,6 +6,10 @@
     "node": ">=20.0.0"
   },
   "type": "module",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "start:dev": "node src/index.mjs --username=V-O-G"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/V-O-G/node-file-manager.git"
