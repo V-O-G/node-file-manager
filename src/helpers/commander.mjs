@@ -2,6 +2,7 @@ import { changeWorkingDirectory } from '../operations/navigation.mjs';
 import { list } from '../operations/list.mjs';
 import { add, copy, move, read, remove, rename } from '../operations/fs.mjs';
 import { printOsInfo } from '../operations/os.mjs';
+import { printHash } from '../operations/hash.mjs';
 
 export const commander = {
     up () {
@@ -33,5 +34,8 @@ export const commander = {
     },
     os ([arg]) {
         printOsInfo(arg);
-    } 
+    },
+    hash ([filePath]) {
+        (async function() { await printHash(filePath); })();
+    },
 };

@@ -25,49 +25,51 @@ export async function add(fileName) {
 
 // rn:
 export async function rename(filePath, fileName) {
-  const newFilePath = joinPathToFile(fileName, dirname(filePath));
-  
-  async function actionRename() {
-    if (await fileExists(newFilePath) || !await fileExists(filePath)) {
-      throw Error;
-    } else {
-        await renameFs(filePath, newFilePath);
+    const newFilePath = joinPathToFile(fileName, dirname(filePath));
+
+    async function actionRename() {
+        if (await fileExists(newFilePath) || !await fileExists(filePath)) {
+            throw Error;
+        } else {
+            await renameFs(filePath, newFilePath);
+        }
     }
-  }
-  await tryAsyncAction(actionRename);
+    await tryAsyncAction(actionRename);
 };
 
 // cp:
 export async function copy(filePath, directoryPath) {
-  await tryAsyncAction(async () => await actionCopy(filePath, directoryPath));
+    await tryAsyncAction(async () => await actionCopy(filePath, directoryPath));
 };
 
 // mv:
 export async function move(filePath, directoryPath) {
-  async function actionMove() {
-    await actionCopy(filePath, directoryPath);
-    await rm(filePath);
-  }
-  await tryAsyncAction(actionMove);
+    async function actionMove() {
+        await actionCopy(filePath, directoryPath);
+        await rm(filePath);
+    }
+    await tryAsyncAction(actionMove);
 };
 
 // rm:
 export async function remove(filePath) {
-  async function actionRemove() {
-    await rm(filePath);
-  }
-  await tryAsyncAction(actionRemove);
+    async function actionRemove() {
+        await rm(filePath);
+    }
+    await tryAsyncAction(actionRemove);
 };
 
 async function actionCopy(filePath, directoryPath) {
-  if((await lstat(filePath)).isDirectory()) { throw Error; };
-  const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));
-  const fileFd = await open(filePath);
-  const newFileFd = await open(newFilePath, 'w');
-  await pipeline(
-    fileFd.createReadStream(filePath),
-    newFileFd.createWriteStream(newFilePath),
-  );
+    if((await lstat(filePath)).isDirectory()) { throw Error; };
+
+    const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));
+    const fileFd = await open(filePath);
+    const newFileFd = await open(newFilePath, 'w');
+
+    await pipeline(
+        fileFd.createReadStream(filePath),
+        newFileFd.createWriteStream(newFilePath),
+    );
 }
 
 function joinPathToFile(fileName, filePath = cwd()) {
@@ -76,8 +78,8 @@ function joinPathToFile(fileName, filePath = cwd()) {
 
 async function fileExists(path) {  
     try {
-      await access(path);
-      return true;
+        await access(path);
+        return true;
     } catch (error) {
         return false;
     }
