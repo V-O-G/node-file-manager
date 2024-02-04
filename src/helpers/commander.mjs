@@ -1,6 +1,6 @@
 import { changeWorkingDirectory } from '../operations/navigation.mjs';
 import { list } from '../operations/list.mjs';
-import { add, copy, move, read, rename } from '../operations/fs.mjs';
+import { add, copy, move, read, remove, rename } from '../operations/fs.mjs';
 
 export const commander = {
     up () {
@@ -26,5 +26,8 @@ export const commander = {
     },
     mv ([filePath, directoryPath]) {
         (async function() { await move(filePath, directoryPath); })();
+    },
+    rm ([filePath]) {
+        (async function() { await remove(filePath); })();
     },
 };

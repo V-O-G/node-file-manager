@@ -51,6 +51,14 @@ export async function move(filePath, directoryPath) {
   await tryAsyncAction(actionMove);
 };
 
+// rm:
+export async function remove(filePath) {
+  async function actionRemove() {
+    await rm(filePath);
+  }
+  await tryAsyncAction(actionRemove);
+};
+
 async function actionCopy(filePath, directoryPath) {
   if((await lstat(filePath)).isDirectory()) { throw Error; };
   const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));

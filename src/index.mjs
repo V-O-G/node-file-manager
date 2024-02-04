@@ -24,6 +24,7 @@ function init() {
 
 function subscribeToReadLine() {
     readLine.on('line', (input) => {
+        if (input.includes('.exit')) process.exit();
         runCommander(getCommand(input));
     })
     .on("SIGINT", () => {
