@@ -1,4 +1,4 @@
-import { access, open, rename as renameFs, writeFile, lstat } from 'fs/promises';
+import { access, open, rename as renameFs, rm, writeFile, lstat } from 'fs/promises';
 import { basename, join, dirname, resolve } from 'path';
 import { cwd } from 'process';
 import { pipeline } from 'stream/promises';
@@ -39,18 +39,28 @@ export async function rename(filePath, fileName) {
 
 // cp:
 export async function copy(filePath, directoryPath) {
-  async function actionCopy() {
-    if((await lstat(filePath)).isDirectory()) { throw Error; };
-    const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));
-    const fileFd = await open(filePath);
-    const newFileFd = await open(newFilePath, 'w');
-    await pipeline(
-      fileFd.createReadStream(filePath),
-      newFileFd.createWriteStream(newFilePath),
-    );
-  }
-  await tryAsyncAction(actionCopy);
+  await tryAsyncAction(async () => await actionCopy(filePath, directoryPath));
 };
+
+// mv:
+export async function move(filePath, directoryPath) {
+  async function actionMove() {
+    await actionCopy(filePath, directoryPath);
+    await rm(filePath);
+  }
+  await tryAsyncAction(actionMove);
+};
+
+async function actionCopy(filePath, directoryPath) {
+  if((await lstat(filePath)).isDirectory()) { throw Error; };
+  const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));
+  const fileFd = await open(filePath);
+  const newFileFd = await open(newFilePath, 'w');
+  await pipeline(
+    fileFd.createReadStream(filePath),
+    newFileFd.createWriteStream(newFilePath),
+  );
+}
 
 function joinPathToFile(fileName, filePath = cwd()) {
     return join(filePath, fileName);
