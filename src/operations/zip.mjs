@@ -3,7 +3,7 @@ import { parse, join } from 'path';
 import { lstat, open } from 'fs/promises';
 import { pipeline } from 'stream/promises';
 
-import { tryAsyncAction } from '../helpers/common.mjs';
+import { tryAsyncAction, closeFhOnError } from '../helpers/common.mjs';
 import { archiveActionEnum } from '../enums/archive-action-enum.mjs';
 
 export async function processArchive (filePath, directoryPath, action) {
@@ -24,15 +24,15 @@ export async function processArchive (filePath, directoryPath, action) {
                 break;
         }
 
-        const fileFd = await open(filePath);
-        const newFileFd = await open(destinationPath, 'wx');
-        fileFd.on('error', () => fileFd.close());
-        newFileFd.on('error', () => newFileFd.close());
+        const fhRead = await open(filePath);
+        const fhWrite = await open(destinationPath, 'wx');
+        closeFhOnError(fhRead);
+        closeFhOnError(fhWrite);
 
         await pipeline(
-            fileFd.createReadStream(filePath),
+            fhRead.createReadStream(filePath),
             brotli,
-            newFileFd.createWriteStream(destinationPath),
+            fhWrite.createWriteStream(destinationPath),
         );
     }
     await tryAsyncAction(actionCompress);

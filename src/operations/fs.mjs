@@ -1,17 +1,17 @@
-import { access, open, rename as renameFs, rm, writeFile, lstat } from 'fs/promises';
+import { access, open, rename as renameFs, rm, writeFile } from 'fs/promises';
 import { basename, join, dirname, resolve } from 'path';
 import { cwd } from 'process';
 import { pipeline } from 'stream/promises';
 
-import { tryAsyncAction, createWritable } from '../helpers/common.mjs';
+import { tryAsyncAction, createWritable, closeFhOnError } from '../helpers/common.mjs';
 
 // cat:
 export async function read(filePath) {
     async function actionRead() {
-        const fileFd = await open(filePath);
-        fileFd.on('error', () => fileFd.close());
+        const fhRead = await open(filePath, 'r');
+        closeFhOnError(fhRead);
 
-        await pipeline(fileFd.createReadStream(filePath), createWritable());
+        await pipeline(fhRead.createReadStream(filePath), createWritable());
     }
     await tryAsyncAction(actionRead);
 }
@@ -63,14 +63,14 @@ export async function remove(filePath) {
 async function actionCopy(filePath, directoryPath) {
     const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));
     
-    const fileFd = await open(filePath);
-    const newFileFd = await open(newFilePath, 'wx');
-    fileFd.on('error', () => fileFd.close());
-    newFileFd.on('error', () => newFileFd.close());
+    const fhRead = await open(filePath, 'r');
+    const fhWrite = await open(newFilePath, 'wx');
+    closeFhOnError(fhRead);
+    closeFhOnError(fhWrite);
 
     await pipeline(
-        fileFd.createReadStream(filePath),
-        newFileFd.createWriteStream(newFilePath),
+        fhRead.createReadStream(filePath),
+        fhWrite.createWriteStream(newFilePath),
     );
 }
 

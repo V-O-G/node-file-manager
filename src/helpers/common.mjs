@@ -48,3 +48,7 @@ export function createWritable() {
         }
     });
 }
+
+export function closeFhOnError(fh) {
+    fh.on('error', () => fd?.close());
+}
