@@ -6,9 +6,10 @@ import { tryAsyncAction, createWritable } from '../helpers/common.mjs';
 
 export async function printHash(filePath) {
     async function actionHash() {
-        if((await lstat(filePath)).isDirectory()) { throw Error; };
         const hash = createHash('sha256');
+        
         const fileFd = await open(filePath);
+        fileFd.on('error', () => fileFd.close());
 
         await pipeline(
             fileFd.createReadStream(filePath),

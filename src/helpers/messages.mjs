@@ -1,4 +1,5 @@
 import { cwd } from 'process';
+import { messageEnum } from '../enums/message-enum.mjs';
 
 export class userMessage {
     constructor(args) {
@@ -19,14 +20,6 @@ export class userMessage {
 
 export function logOperationMessage(event) {
     console.log(`${ operationMessages[event]() }`);
-};
-
-export const messageEnum = {
-    enter: 'enter',
-    exit: 'exit',
-    success: 'success',
-    invalid: 'invalid',
-    error: 'error',
 };
 
 function getUserName(args) {

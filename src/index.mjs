@@ -2,7 +2,8 @@ import { createInterface } from 'readline';
 import { homedir } from 'os';
 import { chdir } from 'process';
 
-import { userMessage, logOperationMessage, messageEnum } from './helpers/messages.mjs';
+import { userMessage, logOperationMessage } from './helpers/messages.mjs';
+import { messageEnum } from './enums/message-enum.mjs';
 import { commander } from './helpers/commander.mjs';
 import { getCommand } from './helpers/common.mjs';
 
@@ -16,7 +17,7 @@ init();
 
 function init() {
     userMessages = new userMessage(process.argv);
-    // chdir(homedir()); TODO: uncomment
+    chdir(homedir());
     userMessages.logOnEvent(messageEnum.enter);
     logOperationMessage(messageEnum.success);
     subscribeToReadLine();
@@ -24,7 +25,7 @@ function init() {
 
 function subscribeToReadLine() {
     readLine.on('line', (input) => {
-        if (input.includes('.exit')) process.exit();
+        if (input.includes('.exit')) exit();
         runCommander(getCommand(input));
     })
     .on("SIGINT", () => {

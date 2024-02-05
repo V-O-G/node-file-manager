@@ -3,6 +3,8 @@ import { list } from '../operations/list.mjs';
 import { add, copy, move, read, remove, rename } from '../operations/fs.mjs';
 import { printOsInfo } from '../operations/os.mjs';
 import { printHash } from '../operations/hash.mjs';
+import { processArchive } from '../operations/zip.mjs';
+import { archiveActionEnum } from '../enums/archive-action-enum.mjs';
 
 export const commander = {
     up () {
@@ -14,8 +16,8 @@ export const commander = {
     ls () {
         (async function() { await list(); })();
     },
-    cat ([fileName]) {
-        (async function() { await read(fileName); })();
+    cat ([filePath]) {
+        (async function() { await read(filePath); })();
     },
     add ([fileName]) {
         (async function() { await add(fileName); })();
@@ -37,5 +39,19 @@ export const commander = {
     },
     hash ([filePath]) {
         (async function() { await printHash(filePath); })();
+    },
+    compress ([filePath, directoryPath]) {
+        (async function() { await processArchive(
+            filePath,
+            directoryPath,
+            archiveActionEnum.compress
+        ); })();
+    },
+    decompress ([filePath, directoryPath]) {
+        (async function() { await processArchive(
+            filePath,
+            directoryPath,
+            archiveActionEnum.decompress
+        ); })();
     },
 };

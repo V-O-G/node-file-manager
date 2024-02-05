@@ -6,11 +6,12 @@ import { pipeline } from 'stream/promises';
 import { tryAsyncAction, createWritable } from '../helpers/common.mjs';
 
 // cat:
-export async function read(fileName) {
+export async function read(filePath) {
     async function actionRead() {
-        const filePath = joinPathToFile(fileName);
-        const fd = await open(filePath);
-        await pipeline(fd.createReadStream(filePath), createWritable());
+        const fileFd = await open(filePath);
+        fileFd.on('error', () => fileFd.close());
+
+        await pipeline(fileFd.createReadStream(filePath), createWritable());
     }
     await tryAsyncAction(actionRead);
 }
@@ -60,11 +61,12 @@ export async function remove(filePath) {
 };
 
 async function actionCopy(filePath, directoryPath) {
-    if((await lstat(filePath)).isDirectory()) { throw Error; };
-
     const newFilePath = joinPathToFile(basename(filePath), resolve(directoryPath));
+    
     const fileFd = await open(filePath);
-    const newFileFd = await open(newFilePath, 'w');
+    const newFileFd = await open(newFilePath, 'wx');
+    fileFd.on('error', () => fileFd.close());
+    newFileFd.on('error', () => newFileFd.close());
 
     await pipeline(
         fileFd.createReadStream(filePath),
